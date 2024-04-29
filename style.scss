@@ -1,0 +1,13 @@
+@import "reveal.js/plugin/highlight/monokai.css";
+
+.reveal .code-wrapper {
+  width: fit-content;
+}
+
+.horizontal-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}

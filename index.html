@@ -3,18 +3,552 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <link rel="stylesheet" href="./style.css" />
-    <title>reveal.js</title>
+    <link rel="stylesheet" href="./style.scss" />
+    <title>RxJS</title>
   </head>
   <body>
     <div class="reveal">
-      <div class="slides">
+      <section class="slides">
         <section>
-          <p>Slide 1</p>
-          <img src="/cat.webp" alt="funny cat" />
+          <h2>Reactive Extensions for JavaScript</h2>
+          <img src="/rxjs.png" alt="rxjs" height="400" />
         </section>
-        <section>Slide 2</section>
-      </div>
+
+        <section>
+          <section>
+            <h3>What is RxJS?</h3>
+            <img src="/wat.png" alt="wat" height="400" />
+            <p>Library for composing asynchronous and event-based programs by using observable sequences.</p>
+          </section>
+          <section>
+            <h3>Why is RxJS?</h3>
+            <img src="/why.png" alt="why" height="400" />
+            <p>It makes it easier to compose asynchronous or callback-based code.</p>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Observable</h3>
+            <p>An Observable is a representation of any set of values over any amount of time.</p>
+            <pre>
+              <code class="typescript" data-trim data-noescape>
+                const observable = new Observable(observer => { observer.next(1); });
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            <h3>Observer</h3>
+            <p>An Observer is a collection of callbacks that knows how to listen to values delivered by the
+              Observable.</p>
+            <pre><code class="typescript">const observer = { next: x => console.log(x) };</code></pre>
+            <img src="/observer.png" alt="observer" height="400" />
+          </section>
+
+          <section>
+            <h3>Subscription</h3>
+            <p>A Subscription is an object that represents a disposable resource, usually the execution of an
+              Observable.</p>
+            <pre><code class="TypeScript">const subscription = observable.subscribe(observer);</code></pre>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Examples of Usage</h3>
+            <img src="/example.png" alt="example" height="400" />
+          </section>
+
+          <section>
+            <p>Simple Observable that emits three values and then completes.</p>
+
+            <div class="horizontal-container">
+              <pre>
+                <code class="typescript" data-trim data-noescape data-line-numbers="1-6|8-12|14">
+                  const observable = new Observable(observer => {
+                    observer.next(1);
+                    observer.next(2);
+                    observer.next(3);
+                    observer.complete();
+                  });
+
+                  const observer = {
+                    next: x => console.log(x),
+                    error: err => console.error(err),
+                    complete: () => console.log('done')
+                  };
+
+                  const subscription = observable.subscribe(observer);
+                </code>
+              </pre>
+
+              <div class="fragment">
+                <p>Output: </p>
+                <pre>
+                  <code class="typescript" data-trim data-noescape>
+                    1
+                    2
+                    3
+                    done
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <p>Create Observable from dom event</p>
+
+            <div class="horizontal-container">
+              <pre>
+                <code class="typescript" data-trim data-noescape>
+                  const button = document.querySelector('button');
+                  const observable = fromEvent(button, 'click');
+
+                  const observer = {
+                    next: event => console.log('Clicked!'),
+                    error: err => console.error(err),
+                    complete: () => console.log('done')
+                  };
+
+                  const subscription = observable.subscribe(observer);
+                </code>
+              </pre>
+
+              <div class="fragment">
+                <p>Output: </p>
+                <pre>
+                  <code class="typescript" data-trim data-noescape>
+                    Clicked!
+                    Clicked!
+                    ...
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <p>Observable from Promise</p>
+
+            <div class="horizontal-container">
+              <pre>
+                <code class="typescript" data-trim data-noescape>
+                  const promise = new Promise(resolve => resolve('Hello RxJS!'));
+                  const observable = from(promise);
+
+                  const observer = {
+                    next: value => console.log(value),
+                    error: err => console.error(err),
+                    complete: () => console.log('done')
+                  };
+
+                  const subscription = observable.subscribe(observer);
+                </code>
+              </pre>
+
+              <div class="fragment">
+                <p>Output: </p>
+                <pre>
+                  <code class="typescript" data-trim data-noescape>
+                    Hello RxJS!
+                    done
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Cold and Hot Observables</h3>
+            <p>Cold and Hot Observables are two fundamental concepts in RxJS that describe how Observables produce and
+              share values.</p>
+            <img src="/hot-cold.png" alt="hot-cold" height="400" />
+          </section>
+
+          <section>
+            <h3>Cold Observables</h3>
+
+            <ul>
+              <li>Start producing values when a subscription is made.</li>
+              <li>Each subscription receives its own independent stream of values.</li>
+              <li>Examples include Observables created using the of, from, or ajax functions.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Example of Cold Observable</h3>
+
+            <div class="horizontal-container">
+              <pre>
+                <code class="typescript" data-trim data-noescape>
+                  const observable = new Observable(observer => {
+                    observer.next(1);
+                    observer.next(2);
+                    observer.next('done');
+                    observer.complete();
+                  });
+
+                  const observer = { next: x => console.log(x) };
+
+                  observable.subscribe(observer);
+                  observable.subscribe(observer);
+                </code>
+              </pre>
+
+              <div class="fragment">
+                <p>Output: </p>
+                <pre>
+                  <code class="typescript" data-trim data-noescape data-line-numbers="1-3|4-6">
+                    1
+                    2
+                    done
+                    1
+                    2
+                    done
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h3>Hot Observables</h3>
+
+            <ul>
+              <li>Produce values regardless of subscriptions.</li>
+              <li>Subscribers share the same stream of values, regardless of when they subscribe.</li>
+              <li>Examples include mouse clicks, keyboard events, or WebSocket messages.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Example of Hot Observable</h3>
+
+            <div class="horizontal-container">
+              <pre>
+                <code class="typescript" data-trim data-noescape>
+                  const observable = new Observable(observer => {
+                    observer.next(1);
+                    observer.next(2);
+                    observer.next('done');
+                    observer.complete();
+                  }).pipe(share());
+
+                  observable.subscribe(event =>
+                    console.log('Subscriber A:', event));
+                  observable.subscribe(event =>
+                    console.log('Subscriber B:', event));
+                </code>
+              </pre>
+
+              <div class="fragment">
+                <p>Output: </p>
+                <pre>
+                  <code class="typescript " data-trim data-noescape data-line-numbers="1|2|3|4|5|6">
+                    Subscriber A: 1
+                    Subscriber B: 1
+                    Subscriber A: 2
+                    Subscriber B: 2
+                    Subscriber A: done
+                    Subscriber B: done
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Subjects</h3>
+
+            <p>Subjects are both an Observable and an Observer.
+              They are like EventEmitters: they maintain a registry of many listeners.</p>
+
+            <img src="/cool.gif" alt="cool" height="400" />
+          </section>
+
+          <section>
+            <h3>Subject</h3>
+            <p>A Subject is a special type of Observable that allows values to be multicasted to many Observers.</p>
+
+            <div class="horizontal-container">
+              <pre>
+                <code class="typescript" data-trim data-noescape>
+                  const subject = new Subject();
+                    subject.subscribe(event =>
+                      console.log('Subscriber A:', event));
+                    subject.subscribe(event =>
+                      console.log('Subscriber B:', event));
+
+                    subject.next(1);
+                    subject.next(2);
+                    subject.next('done');
+                </code>
+              </pre>
+
+              <div class="fragment">
+                <p>Output: </p>
+                <pre>
+                  <code class="typescript " data-trim data-noescape data-line-numbers="1|2|3|4|5|6">
+                    Subscriber A: 1
+                    Subscriber B: 1
+                    Subscriber A: 2
+                    Subscriber B: 2
+                    Subscriber A: done
+                    Subscriber B: done
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h3>BehaviorSubject</h3>
+            <p>A BehaviorSubject is a type of Subject that requires an initial value and emits the current value to new
+              subscribers.</p>
+
+            <div class="horizontal-container">
+              <pre>
+                <code class="typescript " data-trim data-noescape>
+                  const subject = new BehaviorSubject(0);
+                  subject.subscribe(event =>
+                    console.log('Subscriber A:', event));
+                  subject.next(1);
+                  subject.next(2);
+                  subject.subscribe(event =>
+                    console.log('Subscriber B:', event));
+                  subject.next(3);
+                </code>
+              </pre>
+
+              <div class="fragment">
+                <p>Output: </p>
+                <pre>
+                  <code class="typescript" data-trim data-noescape data-line-numbers="1-3|4|5|6">
+                    Subscriber A: 0
+                    Subscriber A: 1
+                    Subscriber A: 2
+                    Subscriber B: 2
+                    Subscriber A: 3
+                    Subscriber B: 3
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2>UNSUBSCRIBE</h2>
+            <img src="/important.png" alt="important">
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Operators</h3>
+            <p>Operators are functions that allow us to transform, filter, and manipulate the data within these
+              streams.</p>
+            <img src="/boom.gif" alt="boom" height="400" />
+          </section>
+
+          <section>
+            <h3>Types of Operators</h3>
+            <ul>
+              <li>Creation Operators</li>
+              <li>Transformation Operators</li>
+              <li>Filtering Operators</li>
+              <li>Combination Operators</li>
+              <li>Utility Operators</li>
+              <li>Conditional Operators</li>
+              <li>Error Handling Operators</li>
+              <li>Mathematical Operators</li>
+            </ul>
+          </section>
+
+          <section>
+            <p>Transformation Operator</p>
+
+            <div class="horizontal-container">
+              <pre>
+                <code class="typescript" data-trim data-noescape>
+                  const observable = of(1, 2, 3);
+                  const result = observable.pipe(map(x => x * 10));
+
+                  result.subscribe(x => console.log(x));
+                </code>
+              </pre>
+
+              <div class="fragment">
+                <p>Output: </p>
+                <pre>
+                  <code class="typescript" data-trim data-noescape>
+                    10
+                    20
+                    30
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <p>Filtering Operator</p>
+
+            <div class="horizontal-container">
+              <pre>
+                <code class="typescript" data-trim data-noescape>
+                  const observable = of(1, 2, 3, 4, 5);
+                  const result = observable.pipe(filter(x => x % 2 === 0));
+
+                  result.subscribe(x => console.log(x));
+                </code>
+              </pre>
+
+              <div class="fragment">
+                <p>Output: </p>
+                <pre>
+                  <code class="typescript" data-trim data-noescape>
+                    2
+                    4
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h3>Transforming Operators</h3>
+            <p>SwitchMap Operator</p>
+
+            <div class="horizontal-container">
+              <pre>
+                <code class="typescript" data-trim data-noescape>
+                  const observable = of(1, 2, 3);
+                  const result = observable.pipe(switchMap(x => of(x * 10)));
+
+                  result.subscribe(x => console.log(x));
+                </code>
+              </pre>
+
+              <div class="fragment">
+                <p>Output: </p>
+                <pre>
+                  <code class="typescript" data-trim data-noescape>
+                    10
+                    20
+                    30
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h3>Combination Operators</h3>
+            <img src="/combine.png" alt="combine" height="400" />
+          </section>
+
+          <section>
+            <p>ForkJoin Operator</p>
+
+            <div class="horizontal-container">
+              <pre>
+                <code class="typescript" data-trim data-noescape>
+                  const observable1 = of(1, 2, 3);
+                  const observable2 = of(4, 5, 6);
+                  const result = forkJoin(observable1, observable2);
+
+                  result.subscribe(([x, y]) => console.log(x, y));
+                </code>
+              </pre>
+
+              <div class="fragment">
+                <p>Output: </p>
+                <pre>
+                  <code class="typescript" data-trim data-noescape>
+                    3 6
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Real life example</h3>
+            <img src="/real-life.gif" alt="real-life" height="400" />
+          </section>
+
+          <section>
+            <h3>Search for a user in GitHub</h3>
+
+            <div class="horizontal-container">
+              <pre>
+                <code class="typescript" data-trim data-noescape>
+                  const input = document.querySelector('input');
+
+                  // create an observable from the input event
+                  const observable = fromEvent(input, 'input').pipe(
+                    // extract the value of the input
+                    map((event: any) => event.target.value),
+
+                    // only emit when the current value is different than the last
+                    distinctUntilChanged(),
+
+                    // log the value
+                    tap(value => console.log('Input:', value)),
+
+                    // wait for 1s pause in events
+                    debounceTime(1000),
+
+                    // search for user in GitHub
+                    switchMap(value => ajax(`https://api.github.com/users/${value}`))
+                  );
+
+                  // subscribe to the observable
+                  observable.subscribe(response => console.log(response));
+                </code>
+              </pre>
+            </div>
+          </section>
+
+          <section>
+            <img src="/nice.gif" alt="nice" height="400">
+          </section>
+        </section>
+
+        <section>
+          <h3>Conclusion</h3>
+
+          <ul>
+            <li>Reactive programming is a paradigm that allows you to express the idea around a feature in one readable
+              place.</li>
+            <li>RxJS is a library that allows you to work with asynchronous data streams.</li>
+            <li>It provides a set of operators that allow you to transform, filter, and manipulate the data within these
+              streams.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Resources</h3>
+          <ul>
+            <li><a href="https://rxjs-dev.firebaseapp.com/guide/overview" target="_blank">RxJS Documentation</a></li>
+            <li><a href="https://www.learnrxjs.io/" target="_blank">Learn RxJS</a></li>
+            <li><a href="https://www.youtube.com/watch?v=PhggNGsSQyg" target="_blank">RxJS in Angular</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>RxJS is AWESOME</h3>
+          <img src="/burn-oh.gif" alt="burn-on" height="500">
+        </section>
+      </section>
     </div>
 
     <script type="module" src="/main.js"></script>
