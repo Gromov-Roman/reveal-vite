@@ -1,3 +1,8 @@
+# empty line
+# empty line
+# empty line
+# empty line
+
 # Slide 1: Reactive Extensions for JavaScript
 ## Commentary:
 Hello and welcome to the presentation on RxJS. Today, we'll be diving into the world of
@@ -92,6 +97,3 @@ for further reading and exploration. Thank you for your attention!
 # empty line
 # empty line
 # empty line
-# empty line
-# empty line
-# The End!
